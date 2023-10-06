@@ -1,0 +1,19 @@
+# aws cloudformation create-stack --stack-name senai-aluno --template-body file://template.yaml
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  SNSAluno:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: sns-aluno
+      TopicName: sns-aluno
+  SQSAlunoQueueDLQ:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: sqs-aluno-dlq
+  SQSAlunoQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: sqs-aluno
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SQSAlunoQueueDLQ.Arn
+        maxReceiveCount: 5
